@@ -7,18 +7,6 @@ puts "Creating test users and posts for The Guest Spot..."
 # Sample tattoo-related usernames
 usernames = ["ink_master_jay", "needle_queen", "flash_artist_sam", "tattoo_mike", "rose_ink"]
 
-# Sample image URLs (placeholder tattoo images)
-sample_images = [
-  "https://picsum.photos/seed/tattoo1/800/800",
-  "https://picsum.photos/seed/tattoo2/800/800",
-  "https://picsum.photos/seed/tattoo3/800/800",
-  "https://picsum.photos/seed/tattoo4/800/800",
-  "https://picsum.photos/seed/tattoo5/800/800",
-  "https://picsum.photos/seed/tattoo6/800/800",
-  "https://picsum.photos/seed/tattoo7/800/800",
-  "https://picsum.photos/seed/tattoo8/800/800",
-]
-
 # Sample captions
 captions = [
   "Fresh geometric piece from today's session 🖤",
@@ -56,7 +44,15 @@ usernames.each_with_index do |username, i|
   users << user
 end
 
+# Get or create Public Feed category
+require_relative '../lib/guest_spot/category_helper'
+category = GuestSpot::CategoryHelper.public_feed_category
+puts "\nUsing category: #{category.name} (id: #{category.id})"
+
 puts "\nCreating posts..."
+
+# Disable rate limiting for seed data
+RateLimiter.disable
 
 # Create posts for each user
 users.each do |user|
@@ -64,32 +60,44 @@ users.each do |user|
   num_posts = rand(2..4)
 
   num_posts.times do |i|
-    post = GuestSpotPost.create!(
-      user: user,
-      caption: captions.sample,
-      image_urls: [sample_images.sample],
-      comments_enabled: true,
-      pinned: false
+    title = "@#{user.username} - #{Time.now.to_i + i}"
+
+    topic_creator = TopicCreator.new(
+      user,
+      Guardian.new(user),
+      category: category.id,
+      title: title,
+      raw: captions.sample,
+      skip_validations: false
     )
-    puts "  Created post #{post.id} for #{user.username}"
+
+    topic = topic_creator.create
+    puts "  Created topic #{topic.id} for #{user.username}"
   end
 
   # Create 1 pinned post per user
-  pinned_post = GuestSpotPost.create!(
-    user: user,
-    caption: "✨ Featured work - #{captions.sample}",
-    image_urls: [sample_images.sample],
-    comments_enabled: true,
-    pinned: true
+  title = "@#{user.username} - #{Time.now.to_i + 100}"
+
+  topic_creator = TopicCreator.new(
+    user,
+    Guardian.new(user),
+    category: category.id,
+    title: title,
+    raw: "✨ Featured work - #{captions.sample}",
+    skip_validations: false
   )
-  puts "  Created PINNED post #{pinned_post.id} for #{user.username}"
+
+  topic = topic_creator.create
+  topic.update_pinned(true, false) # Pin to category (not global)
+  puts "  Created PINNED topic #{topic.id} for #{user.username}"
 end
 
-total_posts = GuestSpotPost.count
-pinned_count = GuestSpotPost.pinned.count
+total_topics = Topic.where(category_id: category.id).count
+pinned_count = Topic.where(category_id: category.id).where.not(pinned_at: nil).count
 
 puts "\n✅ Done!"
 puts "Total users: #{users.count}"
-puts "Total posts: #{total_posts}"
-puts "Pinned posts: #{pinned_count}"
-puts "\nVisit http://localhost:4200/ to see the feed!"
+puts "Total topics: #{total_topics}"
+puts "Pinned topics: #{pinned_count}"
+puts "\nVisit http://localhost:4200/guest-spot to see the feed!"
+puts "\nNote: Topics created without images. To add images, upload them via the Discourse UI."
