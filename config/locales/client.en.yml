@@ -4,6 +4,7 @@ en:
       title: "The Guest Spot"
       feed:
         title: "Artist Feed"
+        new_post: "New Post"
         pinned: "Featured"
         recent: "Recent"
         no_posts: "No posts yet"

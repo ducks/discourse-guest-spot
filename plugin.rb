@@ -11,8 +11,8 @@ enabled_site_setting :guest_spot_enabled
 register_asset "stylesheets/guest-spot.scss"
 
 after_initialize do
-  # Load models
-  require_relative 'app/models/guest_spot_post'
+  # Load helpers and serializers
+  require_relative 'lib/guest_spot/category_helper'
   require_relative 'app/serializers/guest_spot_post_serializer'
   require_relative 'app/controllers/guest_spot/posts_controller'
   require_relative 'app/controllers/guest_spot/feed_controller'
