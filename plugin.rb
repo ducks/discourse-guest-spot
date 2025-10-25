@@ -8,6 +8,8 @@
 
 enabled_site_setting :guest_spot_enabled
 
+register_asset "stylesheets/guest-spot.scss"
+
 after_initialize do
   # Load models
   require_relative 'app/models/guest_spot_post'

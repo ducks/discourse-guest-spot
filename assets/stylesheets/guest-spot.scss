@@ -23,6 +23,20 @@ body.guest-spot-page {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
   }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+  }
 }
 
 .pinned-section {
@@ -35,10 +49,25 @@ body.guest-spot-page {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: 1rem;
+  -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
 
   .guest-spot-post-card {
     flex: 0 0 300px;
     scroll-snap-align: start;
+  }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+
+    .guest-spot-post-card {
+      flex: 0 0 250px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .guest-spot-post-card {
+      flex: 0 0 80vw; // 80% of viewport width on small phones
+    }
   }
 }
 
@@ -54,6 +83,16 @@ body.guest-spot-page {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr); // Force 2 columns on small phones
+    gap: 0.75rem;
+  }
 }
 
 .guest-spot-post-card {
@@ -163,6 +202,26 @@ body.guest-spot-page {
 
   .post-info {
     padding: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .post-header {
+      margin-bottom: 1rem;
+    }
+
+    .post-content {
+      border-radius: 8px;
+    }
+
+    .post-info {
+      padding: 1rem;
+    }
+
+    .post-images .post-image {
+      max-height: 400px;
+    }
   }
 
   .post-author {
