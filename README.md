@@ -12,49 +12,76 @@ The name comes from tattoo culture - a "guest spot" is when a traveling artist w
 
 ## Status
 
-🚧 **Early Design Phase** - Currently documenting requirements and planning architecture. Not ready for installation yet.
+🚧 **Alpha Development** - Basic functionality working. Core features implemented, advanced features in progress.
 
-See [DESIGN.md](DESIGN.md) for the complete design document.
+See [DESIGN.md](DESIGN.md) for the complete design document and [TODO.md](TODO.md) for current development status.
 
-## Key Features (Planned)
+## Current Features
 
-- **Public feed** with pinned carousel and recent grid
-- **Artist portfolios** showcasing their best work
+### ✅ Implemented
+- **Public feed** at `/guest-spot` with grid layout
+- **Post creation** using Discourse's native composer with auto-generated titles
+- **Artist profiles** at `/guest-spot/user/:username` showing all their posts
+- **Individual post pages** at `/guest-spot/post/:id`
+- **Native Discourse Topics** as the data layer (leverages existing features)
+
+### 🚧 In Progress
+- Pinned posts with carousel UI
+- Comment management controls
+- Multiple images per post
+
+### 📋 Planned
 - **Invite tree system** (lobste.rs style) for quality curation
 - **Artist controls** - pin posts, manage comments, mute users
 - **Community moderation** - voting on comments, auto-hide threshold
 - **Private forum** completely separate from public profiles
 
-## Tech Stack
+## Architecture
 
-- Discourse plugin (Ruby + Ember.js)
-- Leverages existing Discourse authentication and permissions
-- New database tables for posts, comments, invites
-- Uses Discourse's existing image upload/S3 integration
+This plugin takes a **Discourse-native approach**:
+- Uses Discourse Topics (in a special "Public Feed" category) instead of custom database tables
+- Leverages Discourse's built-in commenting, permissions, and moderation tools
+- Extends Discourse's composer and routing for a custom UI
+- Reuses Discourse's image upload and S3 integration
 
-## Development Roadmap
+This approach means:
+- Less custom code to maintain
+- Better integration with existing Discourse features
+- Familiar admin controls for site operators
+- Easier to extend and customize
 
-### Phase 1: Core Feed (MVP)
-- Public feed with grid layout
-- Post creation
-- Artist profiles
-- Individual post pages
+## Installation
 
-### Phase 2: Engagement
-- Comments with voting
-- Artist controls
-- Auto-hide system
+1. Add to your `app.yml`:
+```yaml
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          - git clone https://github.com/ducks/discourse-guest-spot.git
+```
 
-### Phase 3: Showcase
-- Pinned posts with carousel
-- Multiple images per post
-- Gallery viewer
+2. Rebuild your container:
+```bash
+./launcher rebuild app
+```
 
-### Phase 4: Moderation
-- Muting system
-- Reports
-- Invite tree display
+3. Create test data (optional):
+```bash
+./launcher enter app
+cd /var/www/discourse/plugins/discourse-guest-spot
+rails runner scripts/create-test-data.rb
+```
 
-### Phase 5: Integration
-- Private forum access
-- Full permissions integration
+## Development
+
+The plugin follows standard Discourse plugin structure:
+
+- `plugin.rb` - Main plugin configuration
+- `app/` - Rails backend (controllers, models, serializers)
+- `assets/javascripts/discourse/` - Ember.js frontend (routes, templates, components)
+- `config/locales/` - Translation strings
+- `lib/` - Shared Ruby code and helpers
+
+See [CLAUDE.md](CLAUDE.md) for coding patterns and conventions used in this project.
