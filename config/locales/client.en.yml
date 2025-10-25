@@ -1,0 +1,18 @@
+en:
+  js:
+    guest_spot:
+      title: "The Guest Spot"
+      feed:
+        title: "Artist Feed"
+        pinned: "Featured"
+        recent: "Recent"
+        no_posts: "No posts yet"
+      post:
+        back_to_feed: "Back to Feed"
+        pin: "Pin to featured"
+        unpin: "Remove from featured"
+        comments_enabled: "Comments enabled"
+        comments_disabled: "Comments disabled"
+        comments_locked: "Comments locked"
+        delete: "Delete post"
+        edit: "Edit post"
