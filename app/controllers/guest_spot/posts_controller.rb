@@ -20,6 +20,22 @@ module GuestSpot
       render_serialized(@post, GuestSpotPostSerializer)
     end
 
+    def by_user
+      user = User.find_by(username_lower: params[:username].downcase)
+      raise Discourse::NotFound unless user
+
+      posts = GuestSpotPost
+        .where(user: user)
+        .includes(:user)
+        .order(created_at: :desc)
+        .limit(50)
+
+      render json: {
+        user: serialize_data(user, BasicUserSerializer),
+        posts: serialize_data(posts, GuestSpotPostSerializer)
+      }
+    end
+
     def create
       post = GuestSpotPost.new(post_params)
       post.user = current_user

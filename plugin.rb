@@ -21,6 +21,7 @@ after_initialize do
   Discourse::Application.routes.append do
     scope module: :guest_spot do
       get '/guest-spot' => 'feed#index'
+      get '/guest-spot/user/:username' => 'posts#by_user'
       resources :posts, only: [:index, :show, :create, :update, :destroy], path: '/guest-spot/posts'
     end
   end

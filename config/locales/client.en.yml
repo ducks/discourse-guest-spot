@@ -16,3 +16,7 @@ en:
         comments_locked: "Comments locked"
         delete: "Delete post"
         edit: "Edit post"
+      user:
+        back: "Back to Feed"
+        posts: "Posts"
+        no_posts: "This artist hasn't posted any work yet"

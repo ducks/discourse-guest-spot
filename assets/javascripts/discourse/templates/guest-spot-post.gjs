@@ -23,7 +23,13 @@ export default class GuestSpotPost extends Component {
           <div class="post-author">
             {{avatar @model.guest_spot_post.user imageSize="large"}}
             <div class="author-details">
-              <h2 class="username">{{@model.guest_spot_post.user.username}}</h2>
+              <LinkTo
+                @route="guest-spot-user"
+                @model={{@model.guest_spot_post.user.username}}
+                class="username-link"
+              >
+                <h2 class="username">{{@model.guest_spot_post.user.username}}</h2>
+              </LinkTo>
               {{#if @model.guest_spot_post.pinned}}
                 <span class="pinned-badge">Featured</span>
               {{/if}}
