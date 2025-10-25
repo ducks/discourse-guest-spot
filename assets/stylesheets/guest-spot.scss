@@ -129,9 +129,15 @@ body.guest-spot-page {
     gap: 0.5rem;
     margin-bottom: 0.5rem;
 
-    .username {
+    .username-link {
       font-weight: 600;
       color: var(--primary);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--tertiary);
+        text-decoration: underline;
+      }
     }
   }
 
@@ -238,11 +244,20 @@ body.guest-spot-page {
       align-items: center;
       gap: 1rem;
 
+      .username-link {
+        text-decoration: none;
+
+        &:hover .username {
+          color: var(--tertiary);
+        }
+      }
+
       .username {
         font-size: 1.5rem;
         font-weight: 600;
         margin: 0;
         color: var(--primary);
+        transition: color 0.2s;
       }
     }
 
@@ -269,5 +284,59 @@ body.guest-spot-page {
   .post-meta {
     color: var(--primary-medium);
     font-size: 0.875rem;
+  }
+}
+
+// User profile page
+.user-profile-header {
+  margin-bottom: 3rem;
+
+  .back-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+
+    &:hover {
+      color: var(--tertiary);
+    }
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    h1 {
+      font-size: 2rem;
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .user-info {
+      gap: 1rem;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+.user-posts-section {
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
   }
 }
