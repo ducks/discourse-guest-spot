@@ -85,28 +85,44 @@ module GuestSpot
     end
 
     def update
-      raise Discourse::InvalidAccess unless can_edit?(@topic)
+      raise Discourse::InvalidAccess if !can_edit?(@topic)
 
-      first_post = @topic.first_post
-      revisor = PostRevisor.new(first_post, @topic)
+      # Handle caption changes
+      if params.key?(:caption)
+        first_post = @topic.first_post
+        revisor = PostRevisor.new(first_post, @topic)
 
-      changes = {}
-      changes[:raw] = params[:caption] if params.key?(:caption)
+        changes = { raw: params[:caption] }
 
-      if revisor.revise!(current_user, changes)
-        # Handle pinning separately
-        if params.key?(:pinned)
-          if params[:pinned]
-            @topic.update_pinned(true, false) # true = pinned, false = not globally
-          else
-            @topic.clear_pin_for(current_user)
-          end
+        if !revisor.revise!(current_user, changes)
+          render_json_error(@topic.errors.full_messages.join(", "))
+          return
         end
-
-        render_serialized(@topic, GuestSpotPostSerializer)
-      else
-        render_json_error(@topic.errors.full_messages.join(", "))
       end
+
+      # Handle pinning separately
+      if params.key?(:pinned)
+        # Convert to boolean (handles string "true"/"false" from params)
+        should_pin = ActiveModel::Type::Boolean.new.cast(params[:pinned])
+
+        if should_pin
+          # Unpin any other posts by this user first (1 pin per artist)
+          category_id = CategoryHelper.public_feed_category_id
+          Topic
+            .where(category_id: category_id, user_id: current_user.id)
+            .where.not(id: @topic.id)
+            .where.not(pinned_at: nil)
+            .each { |topic| topic.update_pinned(false, false) }
+
+          # Pin this post
+          @topic.update_pinned(true, false) # true = pinned, false = not globally
+        else
+          # Unpin this post
+          @topic.update_pinned(false, false)
+        end
+      end
+
+      render_serialized(@topic, GuestSpotPostSerializer)
     end
 
     def destroy
