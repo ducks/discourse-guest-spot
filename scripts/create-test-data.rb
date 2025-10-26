@@ -55,41 +55,74 @@ puts "\nCreating posts..."
 RateLimiter.disable
 
 # Create posts for each user
-users.each do |user|
+users.each_with_index do |user, user_index|
   # Create 2-4 regular posts per user
   num_posts = rand(2..4)
 
   num_posts.times do |i|
-    title = "@#{user.username} - #{Time.now.to_i + i}"
+    caption = captions.sample
+    # Use unsplash placeholder with unique seed
+    image_seed = (user_index * 100) + i
+    image_url = "https://picsum.photos/seed/#{image_seed}/600/600"
 
-    topic_creator = TopicCreator.new(
+    # Include image in post content using markdown
+    raw_content = "![tattoo](#{image_url})\n\n#{caption}"
+
+    # Use first 20 chars of caption as title, add counter if title exists
+    title = caption[0...20].strip
+    counter = 1
+    original_title = title
+    while Topic.where(category_id: category.id, title: title).exists?
+      title = "#{original_title} #{counter}"
+      counter += 1
+    end
+
+    post_creator = PostCreator.new(
       user,
-      Guardian.new(user),
       category: category.id,
       title: title,
-      raw: captions.sample,
-      skip_validations: false
+      raw: raw_content
     )
 
-    topic = topic_creator.create
-    puts "  Created topic #{topic.id} for #{user.username}"
+    post = post_creator.create
+    topic = post.topic
+    if topic.errors.any?
+      puts "  ERROR creating topic: #{topic.errors.full_messages.join(', ')}"
+    else
+      puts "  Created topic #{topic.id} for #{user.username}"
+    end
   end
 
   # Create 1 pinned post per user
-  title = "@#{user.username} - #{Time.now.to_i + 100}"
+  featured_caption = "✨ Featured work - #{captions.sample}"
+  image_seed = (user_index * 100) + 999
+  image_url = "https://picsum.photos/seed/#{image_seed}/600/600"
+  raw_content = "![tattoo](#{image_url})\n\n#{featured_caption}"
 
-  topic_creator = TopicCreator.new(
+  # Use first 20 chars of caption as title, add counter if title exists
+  title = featured_caption[0...20].strip
+  counter = 1
+  original_title = title
+  while Topic.where(category_id: category.id, title: title).exists?
+    title = "#{original_title} #{counter}"
+    counter += 1
+  end
+
+  post_creator = PostCreator.new(
     user,
-    Guardian.new(user),
     category: category.id,
     title: title,
-    raw: "✨ Featured work - #{captions.sample}",
-    skip_validations: false
+    raw: raw_content
   )
 
-  topic = topic_creator.create
-  topic.update_pinned(true, false) # Pin to category (not global)
-  puts "  Created PINNED topic #{topic.id} for #{user.username}"
+  post = post_creator.create
+  topic = post.topic
+  if topic.errors.any?
+    puts "  ERROR creating pinned topic: #{topic.errors.full_messages.join(', ')}"
+  else
+    topic.update_pinned(true, false) # Pin to category (not global)
+    puts "  Created PINNED topic #{topic.id} for #{user.username}"
+  end
 end
 
 total_topics = Topic.where(category_id: category.id).count
@@ -99,5 +132,5 @@ puts "\n✅ Done!"
 puts "Total users: #{users.count}"
 puts "Total topics: #{total_topics}"
 puts "Pinned topics: #{pinned_count}"
-puts "\nVisit http://localhost:4200/guest-spot to see the feed!"
-puts "\nNote: Topics created without images. To add images, upload them via the Discourse UI."
+puts "\nVisit http://localhost:4200/c/public-feed to see the showcase!"
+puts "\nNote: Images are from picsum.photos (Lorem Picsum placeholder service)"

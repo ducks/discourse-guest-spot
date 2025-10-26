@@ -11,19 +11,6 @@ enabled_site_setting :guest_spot_enabled
 register_asset "stylesheets/guest-spot.scss"
 
 after_initialize do
-  # Load helpers and serializers
+  # Load helpers
   require_relative 'lib/guest_spot/category_helper'
-  require_relative 'app/serializers/guest_spot_post_serializer'
-  require_relative 'app/controllers/guest_spot/posts_controller'
-  require_relative 'app/controllers/guest_spot/feed_controller'
-
-  # Routes
-  Discourse::Application.routes.append do
-    scope module: :guest_spot do
-      get '/guest-spot' => 'feed#index'
-      get '/guest-spot/post/:id' => 'feed#index'  # Ember handles routing for page
-      get '/guest-spot/user/:username' => 'posts#by_user'  # API endpoint for user posts
-      resources :posts, only: [:index, :show, :create, :update, :destroy], path: '/guest-spot/posts'
-    end
-  end
 end

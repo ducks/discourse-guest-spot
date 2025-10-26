@@ -1,342 +1,181 @@
-// Hide sidebar toggle on guest spot page
-body.guest-spot-page {
-  .header-sidebar-toggle {
+// Public Feed category styling
+// Makes the topic list more visual/grid-like for the showcase
+
+.category-public-feed {
+  // Hide UI elements we don't need for the showcase
+  .category-breadcrumb,
+  .category-logo,
+  .topic-statuses,
+  .discourse-tags,
+  .list-controls,
+  .topic-list-item-separator {
     display: none !important;
   }
 
-  .hamburger-panel {
-    display: none !important;
-  }
-}
-
-.guest-spot-feed {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
+  // Hide navigation for anonymous users
+  body:not(.anon) & {
+    .nav-pills {
+      display: flex; // Show for logged-in users
+    }
   }
 
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+  body.anon & {
+    .nav-pills,
+    .bulk-select,
+    .create {
+      display: none !important;
+    }
   }
 
-  @media (max-width: 768px) {
+  // Style the topic list as a grid
+  .topic-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
     padding: 1rem;
 
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-    }
-  }
-}
-
-.pinned-section {
-  margin-bottom: 3rem;
-}
-
-.pinned-carousel {
-  display: flex;
-  gap: 1.5rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 1rem;
-  -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
-
-  .guest-spot-post-card {
-    flex: 0 0 300px;
-    scroll-snap-align: start;
-  }
-
-  @media (max-width: 768px) {
-    gap: 1rem;
-
-    .guest-spot-post-card {
-      flex: 0 0 250px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .guest-spot-post-card {
-      flex: 0 0 80vw; // 80% of viewport width on small phones
-    }
-  }
-}
-
-.recent-section {
-  .no-posts {
-    text-align: center;
-    color: var(--primary-medium);
-    padding: 2rem;
-  }
-}
-
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr; // Single column on small phones
-    gap: 0.75rem;
-  }
-}
-
-.guest-spot-post-card {
-  background: var(--secondary);
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--primary-low);
-  text-decoration: none;
-  color: inherit;
-  display: block;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--primary-low-mid);
-    border-color: var(--primary-low-mid);
-  }
-
-  .post-image {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
-  }
-
-  .post-meta {
-    padding: 1rem;
-  }
-
-  .post-author {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-
-    .username-link {
-      font-weight: 600;
-      color: var(--primary);
-      text-decoration: none;
-
-      &:hover {
-        color: var(--tertiary);
-        text-decoration: underline;
-      }
-    }
-  }
-
-  .post-caption {
-    margin: 0.5rem 0;
-    color: var(--primary-high);
-    font-size: 0.9rem;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .pinned-badge {
-    display: inline-block;
-    background: var(--tertiary);
-    color: var(--secondary);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-top: 0.5rem;
-  }
-}
-
-// Post detail page
-.guest-spot-post-detail {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  .post-header {
-    margin-bottom: 2rem;
-
-    .back-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      &:hover {
-        color: var(--tertiary);
-      }
-    }
-  }
-
-  .post-content {
-    background: var(--secondary);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--primary-low);
-  }
-
-  .post-images {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-
-    .post-image {
-      width: 100%;
-      max-height: 600px;
-      object-fit: contain;
-      background: var(--primary-very-low);
-    }
-  }
-
-  .post-info {
-    padding: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-
-    .post-header {
-      margin-bottom: 1rem;
-    }
-
-    .post-content {
-      border-radius: 8px;
-    }
-
-    .post-info {
-      padding: 1rem;
-    }
-
-    .post-images .post-image {
-      max-height: 400px;
-    }
-  }
-
-  .post-author {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-
-    .author-details {
-      display: flex;
-      align-items: center;
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 1rem;
+    }
 
-      .username-link {
-        text-decoration: none;
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 0.5rem;
+    }
 
-        &:hover .username {
+    // Hide the table header
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: contents;
+    }
+
+    // Style each topic as a card
+    tr.topic-list-item {
+      display: flex;
+      flex-direction: column;
+      background: var(--secondary);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--primary-low);
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-low-mid);
+      }
+
+      .guest-spot-card {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .guest-spot-author {
+        padding: 1rem 1rem 0.5rem;
+
+        a {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          text-decoration: none;
           color: var(--tertiary);
+          font-weight: 500;
+
+          &:hover {
+            color: var(--tertiary-high);
+          }
+        }
+
+        .avatar {
+          width: 48px;
+          height: 48px;
         }
       }
 
-      .username {
-        font-size: 1.5rem;
+      .guest-spot-image {
+        img {
+          width: 100%;
+          aspect-ratio: 1;
+          object-fit: cover;
+          display: block;
+        }
+      }
+
+      .guest-spot-title {
+        padding: 1rem 1rem 0.5rem;
+        font-size: 1rem;
         font-weight: 600;
-        margin: 0;
-        color: var(--primary);
-        transition: color 0.2s;
+
+        a {
+          color: var(--primary);
+          text-decoration: none;
+
+          &:hover {
+            color: var(--tertiary);
+          }
+        }
+      }
+
+      .guest-spot-excerpt {
+        padding: 0 1rem 1rem;
+        font-size: 0.9rem;
+        color: var(--primary-medium);
+        line-height: 1.4;
+      }
+
+      .guest-spot-metadata {
+        padding: 0 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.85rem;
+        color: var(--primary-medium);
+
+        .meta-item {
+          display: flex;
+        }
       }
     }
 
-    .pinned-badge {
-      display: inline-block;
+    // Pinned topics get highlighted
+    tr.topic-list-item.pinned {
+      border-color: var(--tertiary);
+      box-shadow: 0 0 0 2px var(--tertiary);
+
+      .title::after {
+        content: " 📌";
+      }
+    }
+  }
+
+  // Make the category description nicer
+  .category-heading {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+
+    p {
+      font-size: 1.1rem;
+      color: var(--primary-high);
+    }
+  }
+
+  // Style the "create topic" button when visible (logged in)
+  .create-topics-button {
+    margin-bottom: 1rem;
+
+    .btn-default {
       background: var(--tertiary);
       color: var(--secondary);
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-  }
 
-  .post-caption {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--primary-high);
-    margin-bottom: 1.5rem;
-    white-space: pre-wrap;
-  }
-
-  .post-meta {
-    color: var(--primary-medium);
-    font-size: 0.875rem;
-  }
-}
-
-// User profile page
-.user-profile-header {
-  margin-bottom: 3rem;
-
-  .back-link {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-
-    &:hover {
-      color: var(--tertiary);
-    }
-  }
-
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-
-    h1 {
-      font-size: 2rem;
-      margin: 0;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .user-info {
-      gap: 1rem;
-
-      h1 {
-        font-size: 1.5rem;
+      &:hover {
+        background: var(--tertiary-high);
       }
-    }
-  }
-}
-
-.user-posts-section {
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
     }
   }
 }
