@@ -16,6 +16,9 @@ en:
         comments_disabled: "Comments disabled"
         comments_locked: "Comments locked"
         delete: "Delete post"
+        delete_confirm: "Are you sure you want to delete this post? This cannot be undone."
+        hide: "Hide post"
+        unhide: "Show post"
         edit: "Edit post"
       user:
         back: "Back to Feed"
