@@ -6,6 +6,7 @@ class GuestSpotPostSerializer < ApplicationSerializer
              :caption,
              :image_urls,
              :pinned,
+             :visible,
              :comments_enabled,
              :comments_locked,
              :created_at,
@@ -39,6 +40,10 @@ class GuestSpotPostSerializer < ApplicationSerializer
 
   def pinned
     object.pinned_at.present?
+  end
+
+  def visible
+    object.visible
   end
 
   def comments_enabled

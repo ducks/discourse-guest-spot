@@ -14,6 +14,7 @@ module GuestSpot
       topics = Topic
         .where(category_id: category_id)
         .where(deleted_at: nil)
+        .where(visible: true)
         .includes(:user, posts: :uploads)
         .order(created_at: :desc)
         .limit(50)
@@ -21,6 +22,7 @@ module GuestSpot
       pinned_topics = Topic
         .where(category_id: category_id)
         .where(deleted_at: nil)
+        .where(visible: true)
         .where.not(pinned_at: nil)
         .includes(:user, posts: :uploads)
         .order(created_at: :desc)
@@ -48,6 +50,9 @@ module GuestSpot
         .includes(:user, posts: :uploads)
         .order(created_at: :desc)
         .limit(50)
+
+      # Only filter hidden posts if viewing someone else's profile
+      topics = topics.where(visible: true) unless current_user && current_user.id == user.id
 
       render json: {
         user: serialize_data(user, BasicUserSerializer),
@@ -120,6 +125,12 @@ module GuestSpot
           # Unpin this post
           @topic.update_pinned(false, false)
         end
+      end
+
+      # Handle visibility toggle
+      if params.key?(:visible)
+        should_be_visible = ActiveModel::Type::Boolean.new.cast(params[:visible])
+        @topic.update!(visible: should_be_visible)
       end
 
       render_serialized(@topic, GuestSpotPostSerializer)

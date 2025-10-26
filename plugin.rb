@@ -21,8 +21,8 @@ after_initialize do
   Discourse::Application.routes.append do
     scope module: :guest_spot do
       get '/guest-spot' => 'feed#index'
-      get '/guest-spot/post/:id' => 'feed#index'  # Ember handles routing
-      get '/guest-spot/user/:username' => 'feed#index'  # Ember handles routing
+      get '/guest-spot/post/:id' => 'feed#index'  # Ember handles routing for page
+      get '/guest-spot/user/:username' => 'posts#by_user'  # API endpoint for user posts
       resources :posts, only: [:index, :show, :create, :update, :destroy], path: '/guest-spot/posts'
     end
   end

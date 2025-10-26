@@ -11,11 +11,14 @@ import { popupAjaxError } from "discourse/lib/ajax-error";
 
 export default class GuestSpotPost extends Component {
   @service currentUser;
+  @service router;
   @tracked isPinned;
+  @tracked isVisible;
 
   constructor() {
     super(...arguments);
     this.isPinned = this.args.model.guest_spot_post.pinned;
+    this.isVisible = this.args.model.guest_spot_post.visible;
   }
 
   get canManagePin() {
@@ -40,6 +43,45 @@ export default class GuestSpotPost extends Component {
       this.isPinned = result.guest_spot_post.pinned;
       // Also update the model
       post.pinned = result.guest_spot_post.pinned;
+    } catch (error) {
+      popupAjaxError(error);
+    }
+  }
+
+  @action
+  async toggleVisibility() {
+    const post = this.args.model.guest_spot_post;
+    const newVisibleState = !this.isVisible;
+
+    try {
+      const result = await ajax(`/guest-spot/posts/${post.id}`, {
+        type: "PUT",
+        data: { visible: newVisibleState },
+      });
+
+      // Update the tracked property for reactive UI
+      this.isVisible = result.guest_spot_post.visible;
+      // Also update the model
+      post.visible = result.guest_spot_post.visible;
+    } catch (error) {
+      popupAjaxError(error);
+    }
+  }
+
+  @action
+  async deletePost() {
+    if (!confirm(i18n("guest_spot.post.delete_confirm"))) {
+      return;
+    }
+
+    const post = this.args.model.guest_spot_post;
+
+    try {
+      await ajax(`/guest-spot/posts/${post.id}`, {
+        type: "DELETE",
+      });
+
+      this.router.transitionTo("guest-spot-user", post.user.username);
     } catch (error) {
       popupAjaxError(error);
     }
@@ -89,6 +131,18 @@ export default class GuestSpotPost extends Component {
                 @label={{if this.isPinned "guest_spot.post.unpin" "guest_spot.post.pin"}}
                 @icon={{if this.isPinned "unlink" "thumbtack"}}
                 class="btn-default pin-toggle-btn"
+              />
+              <DButton
+                @action={{this.toggleVisibility}}
+                @label={{if this.isVisible "guest_spot.post.hide" "guest_spot.post.unhide"}}
+                @icon={{if this.isVisible "eye-slash" "eye"}}
+                class="btn-default visibility-toggle-btn"
+              />
+              <DButton
+                @action={{this.deletePost}}
+                @label="guest_spot.post.delete"
+                @icon="trash-alt"
+                class="btn-danger delete-post-btn"
               />
             {{/if}}
           </div>
