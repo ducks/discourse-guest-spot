@@ -17,14 +17,24 @@ module GuestSpot
     private
 
     def self.create_public_feed_category
-      Category.create!(
+      category = Category.create!(
         name: CATEGORY_NAME,
         slug: CATEGORY_SLUG,
         user_id: Discourse.system_user.id,
         color: "0088CC",
         text_color: "FFFFFF",
-        description: "Public feed of artist work. Posts here appear on the guest spot feed."
+        description: "Public showcase of artist work. Publicly viewable, posting restricted to approved artists.",
+        read_restricted: false  # Makes category publicly viewable even if site requires login
       )
+
+      # Set permissions: Everyone can see, only trust_level_1+ can create/reply
+      category.set_permissions(
+        everyone: :readonly,
+        trust_level_1: :full
+      )
+      category.save!
+
+      category
     end
   end
 end
